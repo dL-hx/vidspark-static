@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="author" content="VidSpark">
+<meta name="robots" content="index, follow">
+<meta name="description" content="VidSpark 是您的智能视频内容创作平台。提供AI脚本生成、视频总结优化、自动成片等多种功能，助您轻松打造高质量内容。">
+<meta name="keywords" content="AI视频, 自动脚本生成, 视频总结, 视频创作, 智能视频, 内容生成，视频分镜提示词">
+<meta property="og:type" content="website">
+<meta property="og:title" content="VidSpark - 音视频转录与智能总结 | 智能AI视频创作与内容生成">
+<meta property="og:description" content="VidSpark 是您的智能视频内容创作平台。提供AI脚本生成、视频总结优化、自动成片等多种功能。">
+<meta data-vue-meta="1" data-vmid="keywords" name="keywords" content="AI视频, 自动脚本生成, 视频总结, 视频分镜提示词, AI分镜生成, 导演级分镜, 视效大模型提示词, 智能视频, 内容生成">
+<meta data-vue-meta="1" data-vmid="og:title" property="og:title" content="VidSpark | 智能AI视频创作与内容生成">
+<meta data-vue-meta="1" data-vmid="og:description" property="og:description" content="VidSpark 是您的智能视频内容创作平台。提供AI脚本生成、视频分镜提示词、视频总结优化等多种功能，助您轻松驾驭视效大模型。">
+<meta data-vue-meta="1" data-vmid="description" name="description" content="从一句话创意出发，依次完成内容创作、分镜方案创作和分镜成片工作流，并在片段级别完成编辑、参数设置和单镜头重做。">
+<title>分镜成片工作流使用文档 - VidSpark 文档 | 智能AI视频创作与内容生成</title>
+<link rel="icon" href="https://www.vidspark.cn/favicon.svg">
+<link rel="stylesheet" href="assets/ref/css/chunk-libs.css">
+<link rel="stylesheet" href="assets/ref/css/app.css">
+<link rel="stylesheet" href="assets/ref/css/chunk-04549998.css">
+<link rel="stylesheet" href="assets/ref/css/chunk-2ea1f1ae.css">
+<link rel="stylesheet" href="assets/ref/css/chunk-6df7e2b6.css">
+<link rel="stylesheet" href="assets/ref/css/chunk-6eb24ea8.css">
+<link rel="stylesheet" href="assets/ref/css/chunk-5ca2103f.css">
+<link rel="stylesheet" href="assets/ref/override.css">
+</head>
+<body class="">
+<div id="app"><div class="doc-page antialiased min-h-screen flex flex-col bg-slate-900 text-slate-50 overflow-x-hidden"><div class="glow-bg top-0 left-1/4 animate-pulse-slow"></div><div class="glow-bg-secondary top-1/3 right-1/4 animate-pulse-slow delay-1000"></div><nav class="fixed w-full z-50 top-0 transition-all duration-300 border-b border-white border-opacity-5 bg-slate-900 bg-opacity-80 backdrop-blur-md"><div class="w-full px-4 sm:px-6 lg:px-8"><div class="flex items-center justify-between h-20"><div class="flex items-center gap-8"><a href="#/" class="flex-shrink-0 flex items-center gap-3 cursor-pointer group router-link-active"><div class="w-10 h-10 bg-gradient-to-br from-brand-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-brand-500 transition-all duration-300"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6 text-white"><rect x="3" y="6" width="18" height="13" rx="2" stroke="currentColor" stroke-width="2"></rect><path d="M8 9.5l5 3-5 3v-6z" fill="currentColor" stroke="none"></path><path d="M15 10h3" stroke-width="2" stroke-linecap="round"></path><path d="M15 14h3" stroke-width="2" stroke-linecap="round"></path><path d="M21 2l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z" fill="currentColor" stroke="none"></path></svg></div><span class="text-2xl font-bold tracking-tight text-white">Vid<span class="text-brand-400">Spark</span></span></a><div class="hidden md:flex items-center gap-6"><a href="index.html#storyboard-prompt" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">分镜成片</a><a href="index.html#features" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">音视频总结</a><a href="index.html#content-creation" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">内容创作</a><a href="blog.html" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">博客</a><a href="membership.html" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">定价</a><a href="dashboard.html" class="text-slate-400 hover:text-white transition-colors text-sm font-medium">历史记录</a><a href="docs.html" class="text-white font-bold transition-colors text-sm border-b-2 border-brand-500 pb-1 router-link-active">文档</a></div></div><div class="flex items-center gap-4"><button class="text-slate-300 hover:text-white transition-colors text-sm font-medium"> 返回文档列表 </button></div></div></div></nav><main class="flex-grow pt-32 pb-20 relative z-10"><section class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"><article class="rounded-[32px] border border-slate-700 bg-slate-800/60 backdrop-blur-sm px-6 md:px-10 py-8 md:py-10 shadow-[0_28px_80px_rgba(2,8,23,0.34)]"><header class="doc-header"><h1 class="doc-title">VidSpark 分镜成片工作流使用文档</h1><div class="doc-video-grid"><figure class="doc-video-card"><video controls="controls" controlslist="nodownload" disablepictureinpicture="" preload="metadata" class="doc-video"><source src="/guide-assets/小猫下班vlog.mov" type="video/quicktime"><source src="/guide-assets/小猫下班vlog.mov" type="video/mp4"> 当前浏览器不支持视频播放。 </video><figcaption class="doc-video-caption">PixVerse-v6 示例</figcaption></figure><figure class="doc-video-card"><video controls="controls" controlslist="nodownload" disablepictureinpicture="" preload="metadata" class="doc-video"><source src="/guide-assets/飞天成片.mov" type="video/quicktime"><source src="/guide-assets/飞天成片.mov" type="video/mp4"> 当前浏览器不支持视频播放。 </video><figcaption class="doc-video-caption">Seedance2.0 参考图生视频示例</figcaption></figure></div></header><div class="markdown-doc"><hr>
+<h2 id="一、这篇文档能帮你做什么">一、这篇文档能帮你做什么</h2>
+<p>通过这篇文档，你可以完成下面这条标准创作链路：</p>
+<p><code>一句话创意 -&gt; 内容创作 -&gt; 分镜方案创作 -&gt; 分镜成片工作流 -&gt; 生成片段 -&gt; 剪辑</code></p>
+<p>
+          </p><figure class="doc-image">
+            <img src="/guide-assets/image.png" alt="">
+
+          </figure>
+        <p></p>
+<p>文档中会重点说明这些能力：</p>
+<ul>
+<li>内容创作：输入简单创意，自动扩写剧情内容</li>
+<li>分镜方案创作：基于剧情生成专业分镜提示词</li>
+<li>分镜成片工作流：按片段生成视频，并支持逐段编辑</li>
+<li>单镜头重做：某一个镜头效果不理想时，可以单独重生成</li>
+<li>四种生成模式：文生视频、首帧生视频、首尾帧生视频、参考图生视频</li>
+<li>支持模型：Seedance 2.0、PixVerse V6</li>
+<li>工作流特点：不用排队、可控、可编辑、可迭代</li>
+</ul>
+<blockquote>
+<p>适用场景示例：剧情类短视频、视觉风格片段、参考图一致性创作等。</p>
+</blockquote>
+<hr>
+<h2 id="二、开始前准备">二、开始前准备</h2>
+<p>建议先准备以下内容：</p>
+<ul>
+<li>一个明确的创意描述，哪怕只有一句话</li>
+<li>你想做的视频大致风格，例如写实、梦幻、超现实、日常 vlog</li>
+<li>如果打算使用首帧、首尾帧或参考图模式，提前准备好图片素材</li>
+</ul>
+<hr>
+<h2 id="三、标准工作流：从一句话到视频片段">三、标准工作流：从一句话到视频片段</h2>
+<h3 id="31-第一步：内容创作">3.1 第一步：内容创作</h3>
+<p>进入 <code>内容创作</code> 页面后，先输入你的创意描述。<br>本文使用的主示例为：</p>
+<blockquote>
+<p>拟人化的小猫 vlog。周五下午，辛苦了一周的小猫期待下班回家享受周末，时间一到，眼神从疲倦立刻变成神采奕奕，快速收拾东西，蹑手蹑脚离开工位，出了公司，开心地奔跑回家。</p>
+</blockquote>
+<p>输入完成后：</p>
+<ol>
+<li>选择合适的创作类型</li>
+<li>选择 <code>视频脚本</code></li>
+<li>将时长设置为 <code>1-3 分钟</code></li>
+<li>点击生成</li>
+</ol>
+<p>系统会自动把原始创意扩展成更完整的剧情内容。生成结果通常不只是正文，还会包含：</p>
+<ul>
+<li>更完整的故事细节</li>
+<li>更清晰的情节推进</li>
+<li>可传播的表达方向</li>
+<li>可继续用于后续分镜创作的剧情文本</li>
+</ul>
+<p>这个阶段的目标，不是直接出片，而是先把一个零散念头整理成可执行的故事方案。</p>
+<p>
+          </p><figure class="doc-image">
+            <img src="/guide-assets/image-1.png" alt="">
+
+          </figure>
+        <br>
+          <figure class="doc-image">
+            <img src="/guide-assets/image-6.png" alt="">
+
+          </figure>
+        <p></p>
+<h3 id="操作建议">操作建议</h3>
+<ul>
+<li>创意描述尽量包含主角、场景、时间和动作变化</li>
+<li>如果你的目标是剧情类短片，描述里最好写出情绪反差或转折点</li>
+<li>这里生成的剧情越清晰，后面的分镜拆解通常越顺畅</li>
+</ul>
+<hr>
+<h3 id="32-第二步：分镜方案创作">3.2 第二步：分镜方案创作</h3>
+<p>拿到剧情内容后，进入 <code>分镜方案创作</code> 页面。</p>
+<p>在这个页面中，你需要把上一步生成的剧情内容粘贴进来，然后补充分镜相关设置，例如：</p>
+<ul>
+<li>视频风格</li>
+<li>光影氛围</li>
+<li>运镜方式</li>
+<li>转场方式</li>
+</ul>
+<p>如果你暂时不想逐项设置，也可以使用默认的 AI 自动设置。</p>
+<p>设置完成后点击生成，系统会自动分析剧情结构，并拆解成多个镜头片段。每个片段会给出相对专业的分镜提示词，通常会包含：</p>
+<ul>
+<li>时间划分</li>
+<li>画面描述</li>
+<li>角色动作</li>
+<li>运镜信息</li>
+<li>光线、角度、风格等生成要素</li>
+</ul>
+<p>
+          </p><figure class="doc-image">
+            <img src="/guide-assets/image-2.png" alt="">
+
+          </figure>
+        <p></p>
+<p>
+          </p><figure class="doc-image">
+            <img src="/guide-assets/image-3.png" alt="">
+
+          </figure>
+        <p></p>
+<h3 id="这一步的产出价值">这一步的产出价值</h3>
+<ul>
+<li>把剧情文本转换成可执行的专业镜头语言</li>
+<li>降低手写提示词的门槛</li>
+<li>让每个镜头在风格和表达上更完整</li>
+<li>支持生成多个方案，方便你做对比和筛选</li>
+</ul>
+<hr>
+<h3 id="33-第三步：进入分镜成片工作流">3.3 第三步：进入分镜成片工作流</h3>
+<p>选定一个合适的分镜方案后，点击进入 <code>分镜成片工作流</code>。</p>
+<p>在这个页面里，所有镜头会以片段形式展示。你可以逐个片段检查提示词、绑定素材、设置参数，然后再开始生成。</p>
+<p>这是整条链路里最关键的一步，因为从这里开始，你不再只是看脚本，而是真正开始把分镜变成可预览、可调整的视频片段。</p>
+<p>
+          </p><figure class="doc-image">
+            <img src="/guide-assets/image-4.png" alt="">
+
+          </figure>
+        <p></p>
+<hr>
+<h2 id="四、分镜成片工作流怎么用">四、分镜成片工作流怎么用</h2>
+<h3 id="41-片段级编辑">4.1 片段级编辑</h3>
+<p>每个片段都可以单独查看和编辑提示词。</p>
+<p>如果你觉得某个镜头描述不够准确，或者希望加入更明确的动作、角色状态、画面元素，可以直接修改当前片段的脚本内容，而不需要推翻整个项目。</p>
+<p>这意味着你可以把 AI 生成的提示词当作初稿，再结合自己的想法进行二次调整。</p>
+<hr>
+<h3 id="42-选择生成模式">4.2 选择生成模式</h3>
+<p>VidSpark 当前支持四种生成模式，你可以根据片段需求灵活选择：</p>
+<h3 id="1-文生视频">1. 文生视频</h3>
+<p>适合没有任何参考素材，直接根据文字描述生成画面的场景。</p>
+<p>适用情况：</p>
+<ul>
+<li>新创意验证</li>
+<li>没有角色图或场景图</li>
+<li>想先快速看镜头方向</li>
+</ul>
+<h3 id="2-首帧生视频">2. 首帧生视频</h3>
+<p>上传一张首帧图片，模型会基于这张图和提示词继续生成后续画面。</p>
+<p>适用情况：</p>
+<ul>
+<li>你已经有某个角色或场景的起始画面</li>
+<li>希望片头画面更加稳定</li>
+</ul>
+<h3 id="3-首尾帧生视频">3. 首尾帧生视频</h3>
+<p>同时上传首帧和尾帧图片，模型会生成两个画面之间的过渡过程。</p>
+<p>适用情况：</p>
+<ul>
+<li>转场镜头</li>
+<li>状态变化明显的镜头</li>
+<li>从一个空间切换到另一个空间的过渡段</li>
+</ul>
+<h3 id="4-参考图生视频">4. 参考图生视频</h3>
+<p>上传参考图片，模型会尽量在参考图风格基础上生成视频。</p>
+<p>适用情况：</p>
+<ul>
+<li>需要保持角色形象一致</li>
+<li>需要保持场景风格统一</li>
+<li>对视觉连续性要求较高的项目</li>
+</ul>
+<p>需要注意的是，目前 <code>参考图生视频</code> 仅支持 <code>Seedance 2.0</code> 和 <code>Seedance 2.0 Fast</code>。</p>
+<hr>
+<h3 id="43-单镜头重做">4.3 单镜头重做</h3>
+<p>这是分镜成片工作流里非常关键的能力。</p>
+<p>如果某一个镜头生成后出现以下情况：</p>
+<ul>
+<li>动作不自然</li>
+<li>氛围不对</li>
+<li>角色表情不理想</li>
+<li>画面和原本分镜预期偏差较大</li>
+</ul>
+<p>你不需要整条视频全部重跑。可以只针对当前这个镜头重新生成，其他已经满意的片段不受影响。</p>
+<p>这种方式特别适合需要反复打磨局部镜头的创作流程，也能明显减少重复等待和重复生成。</p>
+<p>
+          </p><figure class="doc-image">
+            <img src="/guide-assets/image-5.png" alt="">
+
+          </figure>
+        <p></p>
+<hr>
+<h2 id="五、模型选择建议">五、模型选择建议</h2>
+<p>当前工作流支持的主要模型包括：</p>
+<ul>
+<li><code>Seedance 2.0</code></li>
+<li><code>PixVerse V6</code></li>
+</ul>
+<p>从当前示例经验来看：</p>
+<ul>
+<li><code>Seedance 2.0</code> 更适合对复杂动作、人物动画、风格一致性要求较高的镜头</li>
+<li><code>PixVerse V6</code> 更适合日常创作中追求效率和性价比的片段</li>
+</ul>
+<p>如果你使用的是参考图生视频模式，优先确认当前模式是否需要使用 <code>Seedance 2.0</code> 系列模型。</p>
+<hr>
+<h2 id="六、使用建议">六、使用建议</h2>
+<p>为了让第一次体验更顺畅，建议按下面的方式操作：</p>
+<ul>
+<li>内容创作阶段先把故事讲清楚，不要一开始就纠结每个镜头</li>
+<li>分镜方案阶段选择一个最喜欢的方案，再进入成片工作流</li>
+<li>对一致性要求高的项目，尽量提前准备角色图、场景图或参考图</li>
+</ul>
+<hr>
+<h2 id="七、常见问题">七、常见问题</h2>
+<h3 id="1-是不是必须自己写很专业的提示词？">1. 是不是必须自己写很专业的提示词？</h3>
+<p>不是。你可以先用内容创作和分镜方案生成功能拿到初稿，再在工作流里做局部编辑。</p>
+<h3 id="2-某一个镜头不满意怎么办？">2. 某一个镜头不满意怎么办？</h3>
+<p>可以直接单独重做该镜头，不需要把整条视频重新生成一遍。</p>
+<h3 id="3-不同片段可以用不同模式吗？">3. 不同片段可以用不同模式吗？</h3>
+<p>可以。你可以根据镜头需求选择文生视频、首帧生视频、首尾帧生视频或参考图生视频。</p>
+<h3 id="4-参考图生视频能用哪些模型？">4. 参考图生视频能用哪些模型？</h3>
+<p>当前文档确认的信息是：<code>参考图生视频</code> 支持 <code>Seedance 2.0</code> 和 <code>Seedance 2.0 Fast</code>。</p>
+<hr>
+<h2 id="八、总结">八、总结</h2>
+<p>VidSpark 这条分镜成片工作流，核心不是单纯“生成视频”，而是把内容创作、分镜拆解、片段生成和局部重做串成一条可反复迭代的链路。</p>
+<p>如果你想要的不是一次性碰碰运气，而是一套更可控的 AI 视频创作方式，这条工作流会更适合你。</p>
+</div></article></section></main></div></div>
+<script>
+(function(){
+  var els = document.querySelectorAll('span,div,a,h1,h2,p');
+  for (var i = 0; i < els.length; i++){
+    var el = els[i];
+    if (el.textContent.replace(/\s+/g,'') !== 'VidSpark') continue;
+    if (el.children.length > 1) continue;
+    var cls = el.className || '';
+    var brand = /font-bold|studio-brand-name|tracking-tight|text-3xl/.test(cls) ||
+      (el.children.length === 1 && /brand-gradient|text-brand-|text-blue-|text-purple-|text-violet-/.test(el.children[0].className || ''));
+    if (!brand) continue;
+    var t = el.closest('.cursor-pointer') || el.parentElement;
+    if (!t || t.__vsBrand) continue;
+    t.__vsBrand = 1;
+    t.style.cursor = 'pointer';
+    t.addEventListener('click', function(){ location.href = 'index.html'; });
+  }
+  var back = document.querySelector('nav button');
+  if (back && back.textContent.replace(/\s/g,'').indexOf('返回文档列表') === 0){
+    back.addEventListener('click', function(){ location.href = 'docs.html'; });
+  }
+})();
+</script>
+</body>
+</html>

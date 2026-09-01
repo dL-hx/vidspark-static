@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="VidSpark 分镜成片工作流，一键将创意想法转化为电影级 AI 分镜提示词。">
+<title>分镜成片工作流 - AI智能分镜提示词与视频生成 | VidSpark | 智能AI视频创作与内容生成</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/* ================= studio shell ================= */
+.studio-shell{--studio-bg:#f7f3ea;--studio-surface:hsla(0,0%,100%,.9);--studio-border:rgba(15,23,42,.08);--studio-text:#18233a;--studio-sub:#667085;--studio-accent:#ea580c;--studio-accent-soft:rgba(234,88,12,.1);min-height:100vh;height:100vh;display:grid;grid-template-columns:300px minmax(0,1fr);overflow:hidden;transition:grid-template-columns .28s;background:radial-gradient(circle at left top,rgba(255,225,192,.26),transparent 34%),radial-gradient(circle at right top,rgba(255,240,220,.16),transparent 30%),linear-gradient(#fefdfa,#fbf9f5);color:var(--studio-text)}
+.studio-shell.is-sidebar-collapsed{grid-template-columns:0px minmax(0,1fr)}
+.studio-sidebar{display:flex;flex-direction:column;min-height:100vh;height:100vh;padding:24px 10px 18px 18px;border-right:1px solid rgba(15,23,42,.06);background:rgba(255,252,247,.58);backdrop-filter:blur(14px);position:relative;z-index:30;overflow:hidden;transition:transform .28s,opacity .28s,padding .28s}
+.studio-shell.is-sidebar-collapsed .studio-sidebar{transform:translateX(-100%);opacity:0;pointer-events:none;padding-left:0;padding-right:0;border-right:0}
+.studio-brand{gap:14px;padding:12px 64px 12px 10px;background:transparent;border:none;cursor:pointer;text-align:left;display:flex;align-items:center}
+.studio-brand-mark{width:52px;height:52px;border-radius:18px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#2563eb);color:#fff;font-size:22px;box-shadow:0 18px 40px rgba(59,130,246,.22);flex-shrink:0}
+.studio-brand-copy{display:flex;flex-direction:column}
+.studio-brand-name{font-size:28px;font-weight:800;letter-spacing:-.04em;color:#1f2937;line-height:1.15}
+.studio-brand-sub{font-size:12px;color:var(--studio-sub)}
+.studio-sidebar-collapse-btn{position:absolute;top:24px;right:10px;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid rgba(148,163,184,.2);background:rgba(255,255,255,.78);color:#94a3b8;box-shadow:0 10px 24px rgba(15,23,42,.04);cursor:pointer;transition:.2s;z-index:2}
+.studio-sidebar-collapse-btn:hover{color:#64748b;background:#fff;border-color:rgba(148,163,184,.3);transform:translateY(-1px)}
+.studio-new-btn{margin-top:20px;display:flex;align-items:center;justify-content:center;gap:10px;height:64px;border-radius:24px;border:1px solid rgba(99,102,241,.12);background:linear-gradient(135deg,rgba(129,140,248,.14),rgba(168,85,247,.08));color:#5b21b6;font-size:20px;font-weight:700;cursor:pointer;transition:.25s}
+.studio-new-btn:hover{transform:translateY(-2px);box-shadow:0 20px 40px rgba(129,140,248,.12)}
+.studio-sidebar-head{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding:0 4px;font-size:13px;font-weight:700;color:var(--studio-sub)}
+.studio-project-scroll{flex:1 1 0%;min-height:0;margin-top:16px;overflow-y:auto;padding-right:2px}
+.studio-project-item{width:100%;box-sizing:border-box;padding:12px 14px;margin-bottom:8px;border-radius:12px;border:1px solid transparent;background:#fff;cursor:pointer;text-align:left;transition:.2s;display:flex;align-items:center;gap:12px}
+.studio-project-item:hover{background:#f8fafc;transform:translateX(1px)}
+.studio-project-item.is-active{background:#f0f9ff;border-color:#bae5fd}
+.studio-project-icon{width:32px;height:32px;border-radius:8px;background:#f1f5f9;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;color:#64748b}
+.studio-project-item.is-active .studio-project-icon{background:#fff;box-shadow:0 2px 6px rgba(14,165,233,.15)}
+.studio-project-title{flex:1 1 0%;font-size:14px;font-weight:500;color:#334155;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0}
+.studio-project-item.is-active .studio-project-title{color:#0369a1;font-weight:600}
+.studio-empty-history{min-height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--studio-sub);gap:8px;font-size:13px}
+.studio-empty-history i{font-size:30px;opacity:.4}
+.studio-sidebar-footer{margin-top:auto;flex-shrink:0;padding-top:12px;position:relative}
+.studio-user-trigger{width:100%;min-height:0;padding:4px;display:flex;align-items:center;justify-content:flex-start;border-radius:16px;background:transparent;border:none;box-shadow:none;cursor:pointer;transition:background .18s}
+.studio-user-trigger:hover{background:rgba(148,163,184,.12)}
+.studio-user-avatar{width:32px;height:32px;border-radius:999px;object-fit:cover;background:#e2e8f0;border:1px solid rgba(226,232,240,.9);transition:box-shadow .18s,transform .18s}
+.studio-user-trigger:hover .studio-user-avatar{box-shadow:0 0 0 2px rgba(99,102,241,.22)}
+.studio-collapsed-hint{position:absolute;top:20px;left:20px;gap:12px;z-index:32;display:flex;align-items:center}
+.studio-collapsed-logo{width:44px;height:44px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#2563eb);color:#fff;box-shadow:0 12px 28px rgba(59,130,246,.24);cursor:pointer;font-size:18px}
+.studio-collapsed-toggle{width:42px;height:42px;border-radius:14px;border:1px solid rgba(148,163,184,.22);background:rgba(255,255,255,.8);color:#94a3b8;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 12px 28px rgba(15,23,42,.05);transition:.2s}
+.studio-collapsed-toggle:hover{color:#64748b;background:#fff}
+.studio-main{min-width:0;min-height:0;height:100vh;display:flex;flex-direction:column;padding:24px;overflow:hidden}
+.studio-scroll{flex:1 1 0%;min-height:0;overflow-y:auto;padding:0 8px 0 0}
+.custom-scrollbar::-webkit-scrollbar{width:8px;height:8px}
+.custom-scrollbar::-webkit-scrollbar-thumb{background:rgba(148,163,184,.44);border-radius:999px}
+.custom-scrollbar::-webkit-scrollbar-track{background:transparent}
+/* ================= step bar ================= */
+.studio-step-bar{padding:0 0 20px;flex-shrink:0}
+.step-bar-inner{display:flex;align-items:center;justify-content:center;gap:0;padding:12px 24px;background:rgba(255,255,255,.82);border-radius:20px;border:1px solid rgba(15,23,42,.06);box-shadow:0 8px 24px rgba(15,23,42,.04)}
+.step-node{display:flex;align-items:center;gap:10px;padding:10px 24px;border-radius:14px;border:2px solid transparent;background:transparent;cursor:pointer;transition:.3s;position:relative}
+.step-node:disabled{cursor:not-allowed;opacity:.48;box-shadow:none}
+.step-node:disabled:hover{background:transparent}
+.step-node:hover{background:rgba(234,88,12,.04)}
+.step-node.is-active{background:linear-gradient(135deg,rgba(255,247,237,.95),rgba(255,255,255,.92));border-color:rgba(234,88,12,.22);box-shadow:0 8px 20px rgba(234,88,12,.1)}
+.step-node.is-done .step-num{background:linear-gradient(135deg,#10b981,#059669)}
+.step-num{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#94a3b8,#64748b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;transition:.3s}
+.step-node.is-active .step-num{background:linear-gradient(135deg,#f59e0b,#ea580c);box-shadow:0 4px 12px rgba(234,88,12,.3)}
+.step-label{font-size:14px;font-weight:700;color:#475569}
+.step-node.is-active .step-label{color:#ea580c}
+.step-connector{width:48px;height:2px;background:#e2e8f0;transition:background .3s}
+.step-connector.is-active{background:linear-gradient(90deg,#f59e0b,#ea580c)}
+/* ================= create panels ================= */
+.studio-create{width:100%;max-width:980px;margin:0 auto;padding-bottom:40px;display:flex;flex-direction:column;gap:20px}
+#viewProject{max-width:none;margin:0}
+#stPlan{display:flex;flex-direction:column;gap:20px}
+.create-panel{border-radius:28px;border:1px solid rgba(15,23,42,.06);background:rgba(255,255,255,.82);box-shadow:0 18px 40px rgba(15,23,42,.05);backdrop-filter:blur(14px)}
+.create-stack{display:flex;flex-direction:column;gap:20px}
+.create-panel{padding:28px}
+.create-panel-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:22px}
+.create-panel-title-wrap{display:flex;align-items:flex-start;gap:14px}
+.create-panel-icon{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.create-panel-icon.is-amber{background:rgba(251,191,36,.14);color:#d97706}
+.create-panel-title-line{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.create-panel-title{margin:0;font-size:22px;font-weight:900;letter-spacing:-.03em;color:#172554}
+.create-panel-badge{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:rgba(226,232,240,.66);color:#475569;font-size:11px;font-weight:800}
+.create-panel-badge.is-required{background:rgba(251,191,36,.14);color:#b45309}
+.create-textarea{width:100%;padding:14px 20px;border-radius:22px;border:1px solid rgba(148,163,184,.24);background:linear-gradient(rgba(248,250,252,.96),rgba(255,255,255,.86));color:#0f172a;font-size:14px;line-height:1.8;resize:vertical;transition:border-color .2s,box-shadow .2s,background .2s}
+.create-textarea:focus{outline:none;border-color:rgba(249,115,22,.45);box-shadow:0 0 0 4px rgba(249,115,22,.08);background:rgba(255,255,255,.98)}
+.create-textarea.is-compact{min-height:120px;font-size:13px}
+.create-field-foot{margin-top:12px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px;color:#94a3b8}
+.create-field-foot strong{color:#64748b;font-size:13px;white-space:nowrap}
+.create-config-group{padding:0;border:none;border-radius:0;background:transparent}
+.create-config-block{--block-tint:rgba(59,130,246,.08);--block-border:rgba(59,130,246,.18);--block-text:#1d4ed8;padding:24px;border-radius:24px;border:1px solid var(--block-border);background:linear-gradient(180deg,var(--block-tint),hsla(0,0%,100%,.84) 26%,hsla(0,0%,100%,.94))}
+.create-config-block + .create-config-block{margin-top:16px}
+.create-config-block.is-blue{--block-tint:rgba(59,130,246,.08);--block-border:rgba(59,130,246,.18);--block-text:#1d4ed8}
+.create-config-block.is-violet{--block-tint:rgba(168,85,247,.08);--block-border:rgba(168,85,247,.18);--block-text:#7c3aed}
+.create-config-block.is-emerald{--block-tint:rgba(16,185,129,.08);--block-border:rgba(16,185,129,.18);--block-text:#059669}
+.create-config-block.is-rose{--block-tint:rgba(244,63,94,.08);--block-border:rgba(244,63,94,.18);--block-text:#e11d48}
+.create-config-block.is-slate{--block-tint:rgba(100,116,139,.08);--block-border:rgba(100,116,139,.18);--block-text:#475569}
+.create-config-head{display:flex;align-items:center;margin-bottom:18px}
+.create-config-head h3{margin:0;font-size:18px;font-weight:900;color:#172554}
+.create-field-stack{display:flex;flex-direction:column;gap:18px}
+.create-field{display:flex;flex-direction:column;gap:10px}
+.create-field-label{display:inline-flex;align-items:center;flex-wrap:wrap;gap:8px;font-size:14px;font-weight:800;color:#334155}
+.create-field-label i{color:#f97316}
+.create-field-label em{font-style:normal;font-size:11px;font-weight:700;color:#94a3b8}
+.create-help-tooltip{position:relative;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;color:#a855f7;cursor:help}
+.create-help-tooltip > i{color:inherit!important;font-size:18px}
+.create-help-tooltip-bubble{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);min-width:320px;max-width:520px;padding:12px 16px;border-radius:14px;background:rgba(31,41,55,.96);color:#fff;font-size:12px;font-weight:600;line-height:1.6;box-shadow:0 14px 30px rgba(15,23,42,.22);opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;z-index:20}
+.create-help-tooltip-bubble::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border-width:8px 8px 0;border-style:solid;border-color:rgba(31,41,55,.96) transparent transparent}
+.create-help-tooltip:hover .create-help-tooltip-bubble{opacity:1;transform:translateX(-50%) translateY(-2px)}
+.create-field-note{margin:0;font-size:12px;line-height:1.7;color:#94a3b8}
+/* model select */
+.create-select{position:relative}
+.create-select-box{display:flex;align-items:center;gap:12px;width:100%;height:48px;border-radius:16px;border:1px solid rgba(148,163,184,.24);background:rgba(248,250,252,.94);padding:0 16px;font-size:13px;font-weight:600;color:#0f172a;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.create-select-box:hover{border-color:rgba(249,115,22,.35)}
+.create-select.open .create-select-box{border-color:rgba(249,115,22,.45);box-shadow:0 0 0 4px rgba(249,115,22,.08)}
+.create-select-box .chev{margin-left:auto;color:#a0a6b1;font-size:12px;transition:transform .2s}
+.create-select.open .chev{transform:rotate(180deg)}
+.create-select-drop{position:absolute;top:calc(100% + 6px);left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:12px;box-shadow:0 18px 40px -12px rgba(15,23,42,.18);padding:6px;z-index:50;max-height:280px;overflow:auto}
+.create-select-drop button{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:10px 12px;border-radius:8px;font-size:14px;color:#374151;text-align:left}
+.create-select-drop button:hover{background:#f7f8fa}
+.create-select-drop button.on{background:#eef4ff}
+.create-select-drop button.on .nm{color:#2563eb;font-weight:700}
+.create-select-drop em{font-style:normal;color:#9ca3af;font-size:12px;white-space:nowrap}
+.create-select-drop .plus-b{background:#fff7ed;color:#f97316;font-size:11px;padding:1px 7px;border-radius:5px;font-weight:700;font-style:normal;margin-left:6px}
+/* pills & cards */
+.create-pill-group{display:flex;flex-wrap:wrap;gap:10px}
+.create-pill-group-count{gap:14px}
+.create-pill-button,.create-choice-card,.create-switch{border:none;cursor:pointer;transition:.22s}
+.create-pill-button{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px;border-radius:999px;background:rgba(255,255,255,.95);border:1px solid rgba(148,163,184,.22);color:#475569;font-size:13px;font-weight:700}
+.create-count-button{min-width:160px;min-height:54px;justify-content:center;padding:0 26px;border-radius:22px;font-size:16px;font-weight:800}
+.create-choice-card:hover,.create-pill-button:hover{transform:translateY(-1px);border-color:rgba(251,146,60,.32);box-shadow:0 10px 22px rgba(15,23,42,.06)}
+.create-choice-card.is-selected,.create-pill-button.is-selected{border-color:rgba(249,115,22,.28);background:linear-gradient(135deg,rgba(255,247,237,.98),rgba(255,255,255,.98));color:#c2410c;box-shadow:0 14px 28px rgba(249,115,22,.12)}
+.create-pill-button i,.create-choice-card i{font-size:11px}
+.create-card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));gap:12px}
+.create-card-grid.is-compact{grid-template-columns:repeat(auto-fit,minmax(165px,1fr))}
+.create-choice-card{min-height:88px;padding:14px 16px;border-radius:20px;border:1px solid rgba(148,163,184,.2);background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;color:#334155}
+.create-choice-card.is-left{align-items:flex-start;text-align:left}
+.create-lighting-grid{grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px}
+.create-motion-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.create-choice-card.is-motion{min-height:76px;padding:12px 14px;align-items:center;justify-content:center;text-align:center;gap:4px}
+.create-choice-card.is-motion small,.create-choice-card.is-motion strong{width:100%;text-align:center}
+.create-choice-card.is-motion strong i{margin-right:4px}
+.create-choice-card.is-lighting{min-height:74px;padding:12px 14px;align-items:center;justify-content:center;text-align:center;gap:4px}
+.create-choice-card.is-lighting small,.create-choice-card.is-lighting strong{width:100%;text-align:center}
+.create-choice-card strong{font-size:13px;font-weight:800;color:currentColor;line-height:1.5}
+.create-choice-card strong i{margin-right:6px}
+.create-choice-card small{font-size:11px;line-height:1.55;color:#94a3b8}
+.create-choice-card.is-selected small{color:rgba(194,65,12,.7)}
+.create-choice-emoji{font-size:22px}
+.create-ratio-icon{border-radius:0;border:2px solid #cbd5e1;background:rgba(255,255,255,.95);flex-shrink:0}
+.create-ratio-icon.is-selected{border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.12)}
+.create-card-grid.is-compact.create-ratio-row{grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.create-ratio-row .create-choice-card.is-horizontal{min-height:54px;padding:12px 14px;gap:10px;justify-content:center}
+.create-ratio-row .create-choice-card.is-horizontal span{font-size:12px;font-weight:700}
+.create-choice-card.is-horizontal{min-height:58px;flex-direction:row;align-items:center;gap:12px;justify-content:center;text-align:center}
+/* check icons only visible when selected */
+.create-count-button .fa-check,.create-pill-button .fa-check,.create-ratio-row .fa-check,.create-choice-card .fa-check{display:none}
+.create-count-button.is-selected > .fa-check,.create-pill-button.is-selected > .fa-check,.create-ratio-row .is-selected > .fa-check,.create-choice-card.is-selected > strong > .fa-check{display:inline-block}
+/* range */
+.create-range-card{padding:18px;border-radius:22px;border:1px solid rgba(148,163,184,.18);background:rgba(248,250,252,.84)}
+.create-range-main{display:flex;align-items:flex-start;gap:16px}
+.create-range-track-wrap{flex:1 1 0%;min-width:0;padding-top:20px;position:relative}
+.create-range-input{display:block;width:100%;height:6px;border-radius:999px;appearance:none;-webkit-appearance:none;background:linear-gradient(90deg,rgba(251,191,36,.3),rgba(249,115,22,.35));outline:none}
+.create-range-input::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#f97316);border:2px solid #fff;box-shadow:0 6px 14px rgba(249,115,22,.28);cursor:pointer}
+.create-range-value{min-width:72px;height:46px;padding:0 16px;border-radius:16px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;box-shadow:0 10px 24px rgba(249,115,22,.24);flex-shrink:0}
+.create-range-ticks{position:relative;height:18px;margin-top:18px;color:#94a3b8;font-size:11px;font-weight:700}
+.create-range-tick{position:absolute;top:0;transform:translateX(-50%);white-space:nowrap}
+.create-range-tick.is-start{transform:translateX(0)}
+.create-range-tick.is-end{transform:translateX(-100%)}
+/* switch */
+.create-switch-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;border-radius:20px;background:rgba(255,255,255,.74);border:1px solid rgba(148,163,184,.16)}
+.create-switch{position:relative;width:56px;height:32px;border-radius:999px;background:#cbd5e1;flex-shrink:0}
+.create-switch span{position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 4px 12px rgba(15,23,42,.12);transition:transform .22s}
+.create-switch.is-on{background:linear-gradient(135deg,#f59e0b,#ea580c)}
+.create-switch.is-on span{transform:translateX(24px)}
+.create-sub-block{display:flex;flex-direction:column;gap:18px;padding-left:18px;margin-left:4px;border-left:2px solid rgba(251,191,36,.28)}
+.create-color-pill{gap:10px}
+.create-color-dot{width:12px;height:12px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75);flex-shrink:0}
+/* tips */
+.create-tips-block{padding-top:18px}
+.create-tips-panel{border-color:rgba(100,116,139,.18);background:linear-gradient(rgba(100,116,139,.08),rgba(255,255,255,.94) 26%,rgba(255,255,255,.94))}
+.create-section-toggle{width:100%;padding:0;border:none;background:transparent;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.create-section-toggle-title{display:inline-flex;align-items:center;gap:10px;font-size:18px;font-weight:900;color:#172554}
+.create-inline-info-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:12px;background:rgba(254,243,199,.92);color:#d97706;flex-shrink:0}
+.create-inline-info-icon i{color:inherit!important;font-size:15px}
+.create-section-toggle-arrow{color:#64748b;transition:transform .2s}
+.create-section-toggle-arrow.is-expanded{transform:rotate(180deg)}
+.create-tips-bullet-list{list-style:none;margin:16px 0 0;padding:0 4px;display:flex;flex-direction:column;gap:10px}
+.create-tips-bullet-item{display:flex;align-items:flex-start;gap:12px;font-size:15px;line-height:1.55;color:#c45a14}
+.create-tips-bullet-item i{margin-top:4px;font-size:11px;color:#f59e0b;flex-shrink:0}
+.create-tips-bullet-item strong{font-weight:900;color:#b45309}
+/* submit */
+.create-submit-wrap{padding-top:4px;display:flex;justify-content:center}
+.create-submit-btn{width:min(760px,100%);min-height:62px;margin-top:22px;border:none;border-radius:22px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:10px;font-size:16px;font-weight:800;cursor:pointer;transition:transform .24s,box-shadow .24s,opacity .2s;box-shadow:0 18px 34px rgba(249,115,22,.24)}
+.create-submit-btn:hover{transform:translateY(-2px);box-shadow:0 22px 38px rgba(249,115,22,.32)}
+.create-submit-btn:disabled{opacity:.65;cursor:not-allowed;transform:none;box-shadow:0 10px 22px rgba(148,163,184,.14)}
+/* ================= project workspace ================= */
+.studio-workspace{display:flex;flex-direction:column;gap:18px;min-height:100%;width:100%}
+.workspace-main-layout{display:flex;align-items:stretch;gap:20px;height:100%}
+.workspace-sidebar{flex:0 0 360px;min-width:0;display:flex;flex-direction:column;gap:24px;overflow-y:auto;padding:24px;background:rgba(255,255,255,.82);border-radius:24px;border:1px solid rgba(15,23,42,.05);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.sidebar-section{display:flex;flex-direction:column}
+.sidebar-section h3{font-size:15px;font-weight:800;color:#1e293b;margin:0 0 16px;position:relative;padding-bottom:12px;border-bottom:1px solid rgba(15,23,42,.06)}
+.sidebar-creative-brief{font-size:14px;color:#475569;line-height:1.6;margin:0}
+.sidebar-config-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
+.sidebar-config-list li{display:flex;align-items:center;justify-content:space-between}
+.sidebar-config-list span{font-size:13px;color:#64748b;font-weight:500}
+.sidebar-config-list strong{font-size:14px;color:#334155;font-weight:600}
+.workspace-content{flex:1 1 0%;min-width:0;display:flex;flex-direction:column;gap:20px;padding:24px;background:rgba(255,255,255,.82);border-radius:24px;border:1px solid rgba(15,23,42,.05);box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+.workspace-plan-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.workspace-plan-tab{padding:18px 20px;border-radius:18px;border:1px solid rgba(15,23,42,.06);background:#f8fafc;cursor:pointer;text-align:left;transition:.24s cubic-bezier(.4,0,.2,1)}
+.workspace-plan-tab:hover{transform:translateY(-1px);background:#f1f5f9;border-color:rgba(15,23,42,.1)}
+.workspace-plan-tab.is-active{transform:translateY(-1px);background:#fff7ed;border-color:#fdba74;box-shadow:0 8px 16px rgba(251,146,60,.08)}
+.workspace-plan-content{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.plan-selected-indicator{display:inline-flex;align-items:center;gap:6px;color:#ea580c;background:#ffedd5;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800;flex-shrink:0}
+.workspace-plan-tab strong{margin:0;font-size:16px;line-height:1.35;font-weight:800;letter-spacing:-.02em;color:#1e293b;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;text-overflow:ellipsis;word-break:break-all}
+.workspace-plan-tab.is-active strong{color:#ea580c}
+.workspace-plan-preview{background:#1e293b;border-radius:20px;padding:24px;color:#f8fafc;display:flex;flex-direction:column;gap:20px;flex:1 1 0%;min-height:0}
+.plan-preview-header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.plan-preview-title{display:flex;align-items:center;gap:12px}
+.plan-preview-title h2{font-size:18px;font-weight:800;margin:0}
+.plan-preview-title i{color:#fb923c;font-size:20px}
+.plan-preview-actions{display:flex;align-items:center;gap:12px}
+.plan-preview-copy{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;background:rgba(255,255,255,.1);color:#cbd5e1;border:1px solid rgba(255,255,255,.1);font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
+.plan-preview-copy:hover{background:rgba(255,255,255,.15);color:#fff}
+.plan-enter-video-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;background:linear-gradient(135deg,#f97316,#ea580c);color:#fff;font-size:13px;font-weight:700;transition:.2s;box-shadow:0 4px 12px rgba(234,88,12,.2)}
+.plan-enter-video-btn:hover{background:linear-gradient(135deg,#fb923c,#f97316);transform:translateY(-1px);box-shadow:0 6px 16px rgba(234,88,12,.3)}
+.plan-preview-content-wrapper{background:rgba(15,23,42,.4);border-radius:16px;padding:20px;border:1px solid rgba(255,255,255,.05);flex:1 1 0%;display:flex;flex-direction:column;min-height:320px}
+.plan-preview-text{font-family:SFMono-Regular,Consolas,"Liberation Mono",Menlo,Courier,monospace;font-size:14px;line-height:1.6;color:#5eead4;font-weight:500;white-space:pre-wrap;word-break:break-all;flex:1 1 0%;overflow-y:auto;margin:0;padding-right:8px;max-height:560px}
+.workspace-waiting-card{min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;border-radius:32px;background:rgba(255,255,255,.82);border:1px solid rgba(15,23,42,.05);box-shadow:0 20px 40px rgba(15,23,42,.05)}
+.workspace-waiting-icon{width:74px;height:74px;border-radius:24px;background:rgba(255,247,237,.9);color:#ea580c;display:flex;align-items:center;justify-content:center;font-size:30px}
+.workspace-waiting-card p{color:#4b5563;font-size:14px;margin:0}
+.spinner{width:26px;height:26px;border:3px solid rgba(234,88,12,.25);border-top-color:#ea580c;border-radius:50%;animation:rot 1s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+.workspace-video-empty{min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center;border-radius:32px;background:rgba(255,255,255,.82);border:1px solid rgba(15,23,42,.05);box-shadow:0 20px 40px rgba(15,23,42,.05);padding:48px}
+.workspace-video-empty h2{margin:0;font-size:20px;font-weight:800;color:#172554}
+.workspace-video-empty p{margin:0;font-size:14px;color:#475569;max-width:420px;line-height:1.7}
+.workspace-video-empty .plan-enter-video-btn{padding:14px 32px;border-radius:18px;font-size:15px;margin-top:8px}
+[hidden]{display:none!important}
+#stFilm{display:flex;flex-direction:column;gap:20px}
+.video-overview-header{display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(255,255,255,.82);border-radius:22px;border:1px solid rgba(15,23,42,.06);box-shadow:0 20px 40px rgba(15,23,42,.05);padding:20px 24px}
+.video-overview-info{display:flex;align-items:center;gap:12px}
+.video-overview-info h2{margin:0;font-size:18px;font-weight:800;color:#172554}
+.video-overview-progress{background:rgba(234,88,12,.08);color:#ea580c;border-radius:999px;padding:4px 12px;font-size:12px;font-weight:700}
+.video-overview-actions{display:flex;align-items:center;gap:12px}
+.video-empty-icon{width:74px;height:74px;border-radius:24px;background:rgba(255,247,237,.9);display:flex;align-items:center;justify-content:center;color:#ea580c;font-size:28px}
+/* toast */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:9px;border-radius:10px;padding:12px 22px;font-size:14px;font-weight:600;z-index:99;box-shadow:0 12px 30px -10px rgba(0,0,0,.2)}
+.toast.err{background:#fdecea;color:#c62828;border:1px solid #f5c6c6}
+.toast.ok{background:#e8f7ee;color:#1b7f3b;border:1px solid #bfe6cd}
+.toast svg{width:16px;height:16px}
+@media(max-width:960px){.studio-shell{grid-template-columns:0px minmax(0,1fr)}.studio-sidebar{transform:translateX(-100%);opacity:0;pointer-events:none}.studio-collapsed-hint{display:flex}}
+</style>
+</head>
+<body>
+<div class="studio-shell" id="shell">
+
+<aside class="studio-sidebar">
+  <a class="studio-brand" href="index.html">
+    <div class="studio-brand-mark"><i class="fa-solid fa-clapperboard"></i></div>
+    <div class="studio-brand-copy"><span class="studio-brand-name">VidSpark</span><span class="studio-brand-sub">分镜成片工作流</span></div>
+  </a>
+  <button class="studio-sidebar-collapse-btn" id="collapseBtn" title="收起侧边栏"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg></button>
+  <button class="studio-new-btn" id="newTaskBtn"><i class="fa-solid fa-plus"></i><span>新任务</span></button>
+  <div class="studio-sidebar-head"><span>项目列表</span></div>
+  <div class="studio-project-scroll custom-scrollbar">
+    <div class="studio-empty-history" id="projEmpty" hidden><i class="fa-regular fa-folder-open"></i><span>还没有分镜项目</span><span>从右侧新建一个分镜成片工作流任务</span></div>
+    <div id="projList">
+      <button class="studio-project-item is-active" id="projSeed">
+        <div class="studio-project-icon"><i class="fa-solid fa-clapperboard"></i></div>
+        <div class="studio-project-title" title="未来城市">未来城市</div>
+      </button>
+    </div>
+  </div>
+  <div class="studio-sidebar-footer">
+    <button class="studio-user-trigger"><img src="https://thirdwx.qlogo.cn/mmopen/vi_32/dYZ9vmoSW03wrqbGy5SZE6r40FkqYcTbfkHHJib3X1Luqsz1UVJpEXtS85AEiaO4RhV9niaMxOQ1icGRZ2aOf9UP3w/132" alt="User" class="studio-user-avatar"></button>
+  </div>
+</aside>
+
+<main class="studio-main">
+  <div class="studio-collapsed-hint" id="collapsedHint" hidden>
+    <div class="studio-collapsed-logo"><i class="fa-solid fa-clapperboard"></i></div>
+    <button class="studio-collapsed-toggle" id="expandBtn" title="展开侧边栏"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg></button>
+  </div>
+
+  <div class="studio-step-bar">
+    <div class="step-bar-inner">
+      <button class="step-node is-active is-done" id="stage1"><span class="step-num">1</span><span class="step-label">分镜方案</span><i class="fa-solid fa-check step-check"></i></button>
+      <div class="step-connector" id="stepConn"></div>
+      <button class="step-node" id="stage2" disabled><span class="step-num">2</span><span class="step-label">分镜成片</span></button>
+    </div>
+  </div>
+
+  <section class="studio-scroll custom-scrollbar create-scroll">
+    <!-- ========== 新建任务 ========== -->
+    <div class="studio-create" id="viewNew">
+      <div class="create-stack">
+        <!-- 创意简报 -->
+        <article class="create-panel">
+          <div class="create-panel-head">
+            <div class="create-panel-title-wrap">
+              <div class="create-panel-icon is-amber"><i class="fa-solid fa-lightbulb"></i></div>
+              <div>
+                <div class="create-panel-title-line"><h2 class="create-panel-title">创意简报</h2><span class="create-panel-badge is-required">必填</span></div>
+              </div>
+            </div>
+          </div>
+          <textarea id="briefTa" rows="4" maxlength="3000" class="create-textarea" placeholder="例如：一个未来城市的科幻短片。戴着面罩的旅行者走过霓虹街头，最后站在天台俯瞰。"></textarea>
+          <div class="create-field-foot"><span>只需输入大致剧情或核心想法，自动补全专业分镜方案；若生成较长时长的分镜，建议填写更完整的剧本。剧本可先在内容创作模块的"视频脚本"中生成。</span><strong id="briefCnt">0 / 3000</strong></div>
+        </article>
+
+        <!-- 配置 -->
+        <article class="create-panel">
+          <div class="create-config-group">
+            <!-- 基础配置 -->
+            <section class="create-config-block is-blue">
+              <div class="create-config-head"><h3>基础配置</h3></div>
+              <div class="create-field-stack">
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-microchip"></i><span>AI 创作模型</span></label>
+                  <div class="create-select" id="mdlWrap">
+                    <button class="create-select-box" id="mdlBox"><span id="mdlName">deepseek-v4-flash (0.2x credit)</span><i class="fa-solid fa-chevron-down chev"></i></button>
+                    <div class="create-select-drop" id="mdlDrop" hidden>
+                      <button class="on" data-m="deepseek-v4-flash" data-c="0.2x credit"><span class="nm">deepseek-v4-flash</span><em>0.2x credit</em></button>
+                      <button data-m="qwen3.5-flash" data-c="0.2x credit"><span class="nm">qwen3.5-flash<i class="plus-b">Plus</i></span><em>0.2x credit</em></button>
+                      <button data-m="doubao-seed-2.0-flash" data-c="0.2x credit"><span class="nm">doubao-seed-2.0-flash<i class="plus-b">Plus</i></span><em>0.2x credit</em></button>
+                      <button data-m="doubao-seed-2.0-lite" data-c="0.5x credit"><span class="nm">doubao-seed-2.0-lite<i class="plus-b">Plus</i></span><em>0.5x credit</em></button>
+                      <button data-m="deepseek-v3.2-thinking" data-c="0.5x credit"><span class="nm">deepseek-v3.2-thinking<i class="plus-b">Plus</i></span><em>0.5x credit</em></button>
+                      <button data-m="qwen3.6-plus" data-c="1.2x credit"><span class="nm">qwen3.6-plus<i class="plus-b">Plus</i></span><em>1.2x credit</em></button>
+                      <button data-m="doubao-seed-2.0-pro" data-c="1.8x credit"><span class="nm">doubao-seed-2.0-pro<i class="plus-b">Plus</i></span><em>1.8x credit</em></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-layer-group"></i><span>生成方案数量</span></label>
+                  <div class="create-pill-group create-pill-group-count" data-s1>
+                    <button class="create-count-button create-pill-button"><i class="fa-solid fa-check"></i><span>1 套方案</span></button>
+                    <button class="create-count-button create-pill-button is-selected"><i class="fa-solid fa-check"></i><span>2 套方案</span></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-clock"></i><span>视频总时长</span><em>4–60 秒</em></label>
+                  <div class="create-range-card">
+                    <div class="create-range-main">
+                      <div class="create-range-track-wrap">
+                        <input type="range" min="4" max="60" step="1" value="15" class="create-range-input" id="durRange">
+                        <div class="create-range-ticks">
+                          <span class="create-range-tick is-start" style="left:0%">4s</span>
+                          <span class="create-range-tick" style="left:28.5714%">20s</span>
+                          <span class="create-range-tick" style="left:64.2857%">40s</span>
+                          <span class="create-range-tick is-end" style="left:100%">60s</span>
+                        </div>
+                      </div>
+                      <div class="create-range-value" id="durVal">15s</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-expand"></i><span>画面比例</span><span class="create-help-tooltip"><i class="fa-solid fa-circle-question"></i><span class="create-help-tooltip-bubble">生成更符合横屏 / 竖屏 / 方屏语境的提示词和镜头设计</span></span></label>
+                  <div class="create-card-grid is-compact create-ratio-row" data-s1>
+                    <button class="create-choice-card is-horizontal"><div class="create-ratio-icon" style="width:28px;height:12px"></div><span>21:9</span><i class="fa-solid fa-check"></i></button>
+                    <button class="create-choice-card is-horizontal is-selected"><div class="create-ratio-icon is-selected" style="width:24px;height:14px"></div><span>16:9</span><i class="fa-solid fa-check"></i></button>
+                    <button class="create-choice-card is-horizontal"><div class="create-ratio-icon" style="width:20px;height:16px"></div><span>4:3</span><i class="fa-solid fa-check"></i></button>
+                    <button class="create-choice-card is-horizontal"><div class="create-ratio-icon" style="width:18px;height:18px"></div><span>1:1</span><i class="fa-solid fa-check"></i></button>
+                    <button class="create-choice-card is-horizontal"><div class="create-ratio-icon" style="width:16px;height:20px"></div><span>3:4</span><i class="fa-solid fa-check"></i></button>
+                    <button class="create-choice-card is-horizontal"><div class="create-ratio-icon" style="width:14px;height:24px"></div><span>9:16</span><i class="fa-solid fa-check"></i></button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 视觉风格 -->
+            <section class="create-config-block is-violet">
+              <div class="create-config-head"><h3>视觉风格</h3></div>
+              <div class="create-field-stack">
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-wand-magic-sparkles"></i><span>整体风格</span></label>
+                  <div class="create-card-grid" data-s1>
+                    <button class="create-choice-card is-selected"><span class="create-choice-emoji">🎬</span><strong>电影写实</strong><small>超强真实感</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🌸</span><strong>日系动画</strong><small>吉卜力/新海诚</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🧊</span><strong>3D 动画</strong><small>皮克斯风格</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🌃</span><strong>赛博朋克</strong><small>霓虹都市</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🏔️</span><strong>水墨国风</strong><small>泼墨山水</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">📽️</span><strong>复古胶片</strong><small>怀旧色调</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🎞️</span><strong>黑白电影</strong><small>戏剧性光影</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🌀</span><strong>超现实</strong><small>达利/MV风格</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">⚔️</span><strong>奇幻史诗</strong><small>魔幻瑰丽</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">📹</span><strong>纪录片</strong><small>科普客观</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🎨</span><strong>MV/视觉艺术</strong><small>音乐短片</small></button>
+                    <button class="create-choice-card"><span class="create-choice-emoji">🏙️</span><strong>都市时尚</strong><small>品牌广告</small></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-tv"></i><span>画质要求</span></label>
+                  <div class="create-pill-group" data-s1>
+                    <button class="create-pill-button"><i class="fa-solid fa-check"></i><span>标准画质</span></button>
+                    <button class="create-pill-button"><i class="fa-solid fa-check"></i><span>高清</span></button>
+                    <button class="create-pill-button is-selected"><i class="fa-solid fa-check"></i><span>电影级</span></button>
+                    <button class="create-pill-button"><i class="fa-solid fa-check"></i><span>超高清</span></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-camera-retro"></i><span>镜头效果</span><em>可多选</em><span class="create-help-tooltip"><i class="fa-solid fa-circle-question"></i><span class="create-help-tooltip-bubble">模拟真实电影镜头的光学特性，为画面增添质感与氛围，不选则由 AI 自动决定</span></span></label>
+                  <div class="create-pill-group" data-m1>
+                    <button class="create-pill-button"><span>浅景深</span></button>
+                    <button class="create-pill-button"><span>胶片颗粒</span></button>
+                    <button class="create-pill-button"><span>变形宽银幕光斑</span></button>
+                    <button class="create-pill-button"><span>微缩模型感</span></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-sun"></i><span>光影氛围</span></label>
+                  <div class="create-card-grid is-compact create-lighting-grid" data-s1>
+                    <button class="create-choice-card is-left is-lighting is-selected"><strong>✨ AI 自动</strong><small>智能匹配场景</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🌅 黄金时刻</strong><small>日出日落柔光</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🌙 月光银辉</strong><small>冷调夜景氛围</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>💡 霓虹灯光</strong><small>赛博朋克色光</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🕯️ 烛光暖调</strong><small>亲密温暖场景</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🌄 逆光剪影</strong><small>剪影轮廓美学</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🌤️ 体积光/丁达尔</strong><small>光线穿透雾气</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🎨 伦勃朗光</strong><small>经典三角光位</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>☁️ 阴天柔光</strong><small>均匀散射无阴影</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>💫 顶光</strong><small>头顶直射戏剧感</small></button>
+                    <button class="create-choice-card is-left is-lighting"><strong>🔦 硬光</strong><small>锐利轮廓高对比</small></button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 运镜与节奏 -->
+            <section class="create-config-block is-emerald">
+              <div class="create-config-head"><h3>运镜与节奏</h3></div>
+              <div class="create-field-stack">
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-arrows-up-down-left-right"></i><span>运镜偏好</span><em>可多选</em></label>
+                  <div class="create-card-grid is-compact create-motion-grid" data-s1>
+                    <button class="create-choice-card is-left is-motion is-selected"><strong><i class="fa-solid fa-check"></i> AI 自动</strong><small>智能匹配运镜</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 推镜头</strong><small>逼近主体增强压迫感</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 拉镜头</strong><small>远离主体揭示全貌</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 横摇</strong><small>水平扫视展现空间</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 跟随镜头</strong><small>跟拍人物移动</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 环绕镜头</strong><small>360°绕主体旋转</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 升降镜头</strong><small>垂直升起或下降</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 摇臂</strong><small>弧形摆动拍摄</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 固定镜头</strong><small>静止构图稳定感</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 手持晃动</strong><small>纪实感与紧张感</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 一镜到底</strong><small>不剪辑连续拍摄</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 正反打</strong><small>对话双方交替切换</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 希区柯克变焦</strong><small>推拉变焦背景扭曲</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 主观视角 POV</strong><small>角色第一人称视角</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 聚焦推拉</strong><small>前后景焦点转换</small></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-shuffle"></i><span>转场方式</span></label>
+                  <div class="create-card-grid is-compact create-motion-grid" data-s1>
+                    <button class="create-choice-card is-left is-motion is-selected"><strong><i class="fa-solid fa-check"></i> AI 自动</strong><small>智能匹配最佳转场</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 硬切</strong><small>直接切换无过渡</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 淡入淡出</strong><small>画面渐隐渐现</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 溶解转场</strong><small>两画面叠化过渡</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 无缝转场</strong><small>利用运动衔接场景</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 匹配剪辑</strong><small>相似构图衔接</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 遮罩转场</strong><small>物体遮挡切换场景</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 光效转场</strong><small>光线闪耀过渡画面</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 推拉穿越</strong><small>镜头穿过物体转场</small></button>
+                    <button class="create-choice-card is-left is-motion"><strong><i class="fa-solid fa-check"></i> 声音先行转场</strong><small>J-Cut/L-Cut 声画分离</small></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-wave-square"></i><span>叙事节奏</span></label>
+                  <div class="create-card-grid is-compact" data-s1>
+                    <button class="create-choice-card is-left is-selected"><strong>📖 标准叙事</strong><small>远景开场→中近景发展→特写高潮→拉远收束</small></button>
+                    <button class="create-choice-card is-left"><strong>⚡ 快节奏剪辑</strong><small>快切、短镜头、密集动作，适合预告片/广告</small></button>
+                    <button class="create-choice-card is-left"><strong>🍃 文艺慢节奏</strong><small>长镜头、慢运镜、留白，适合情感/风景片</small></button>
+                    <button class="create-choice-card is-left"><strong>📈 递进式</strong><small>镜头由静至动、由慢到快层层递进</small></button>
+                    <button class="create-choice-card is-left"><strong>🔄 交叉叙事</strong><small>两条线交替剪辑</small></button>
+                    <button class="create-choice-card is-left"><strong>💥 倒叙式</strong><small>高潮前置→闪回→回到现在</small></button>
+                    <button class="create-choice-card is-left"><strong>🎭 蒙太奇</strong><small>经典蒙太奇剪辑，多场景并置</small></button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 声音与台词 -->
+            <section class="create-config-block is-rose">
+              <div class="create-config-head"><h3>声音与台词</h3></div>
+              <div class="create-field-stack">
+                <div class="create-field">
+                  <div class="create-switch-row">
+                    <div>
+                      <label class="create-field-label"><i class="fa-solid fa-closed-captioning"></i><span>包含台词 / 对白</span></label>
+                      <p class="create-field-note">开启后为每个分镜生成角色台词和画外旁白。</p>
+                    </div>
+                    <button class="create-switch" id="voiceTgl"><span></span></button>
+                  </div>
+                </div>
+                <div class="create-sub-block" id="voiceBox" hidden>
+                  <div class="create-field">
+                    <label class="create-field-label"><i class="fa-solid fa-language"></i><span>台词语言</span></label>
+                    <div class="create-pill-group" data-s1>
+                      <button class="create-pill-button"><span>由 AI 匹配</span></button>
+                      <button class="create-pill-button is-selected"><span>中文</span></button>
+                      <button class="create-pill-button"><span>English</span></button>
+                      <button class="create-pill-button"><span>日本語</span></button>
+                      <button class="create-pill-button"><span>한국어</span></button>
+                    </div>
+                  </div>
+                  <div class="create-field">
+                    <label class="create-field-label"><i class="fa-solid fa-microphone-lines"></i><span>旁白风格</span></label>
+                    <div class="create-pill-group" data-s1>
+                      <button class="create-pill-button is-selected"><span>无旁白纯对白</span></button>
+                      <button class="create-pill-button"><span>男声沉稳</span></button>
+                      <button class="create-pill-button"><span>女声温柔</span></button>
+                      <button class="create-pill-button"><span>第一人称独白</span></button>
+                    </div>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-music"></i><span>音效 / 配乐倾向</span><em>可选</em></label>
+                  <div class="create-pill-group" data-s1>
+                    <button class="create-pill-button is-selected"><span>由 AI 自动匹配</span></button>
+                    <button class="create-pill-button"><span>史诗管弦乐</span></button>
+                    <button class="create-pill-button"><span>电子氛围</span></button>
+                    <button class="create-pill-button"><span>钢琴轻柔</span></button>
+                    <button class="create-pill-button"><span>民谣吉他</span></button>
+                    <button class="create-pill-button"><span>中国传统古风</span></button>
+                    <button class="create-pill-button"><span>爵士复古</span></button>
+                    <button class="create-pill-button"><span>摇滚激烈</span></button>
+                    <button class="create-pill-button"><span>自然环境音</span></button>
+                    <button class="create-pill-button"><span>电影悬疑紧张</span></button>
+                    <button class="create-pill-button"><span>静音 / 仅音效</span></button>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- 高级设置 -->
+            <section class="create-config-block is-slate">
+              <div class="create-config-head"><h3>高级设置</h3></div>
+              <div class="create-field-stack">
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-theater-masks"></i><span>情绪基调</span></label>
+                  <div class="create-pill-group" data-s1>
+                    <button class="create-pill-button is-selected"><span>✨ AI 自动</span></button>
+                    <button class="create-pill-button"><span>🌑 孤独空旷</span></button>
+                    <button class="create-pill-button"><span>😰 紧张悬疑</span></button>
+                    <button class="create-pill-button"><span>🥰 温馨治愈</span></button>
+                    <button class="create-pill-button"><span>🏔️ 史诗壮阔</span></button>
+                    <button class="create-pill-button"><span>🪷 宁静祥和</span></button>
+                    <button class="create-pill-button"><span>😄 喜剧幽默</span></button>
+                    <button class="create-pill-button"><span>💕 浪漫唯美</span></button>
+                    <button class="create-pill-button"><span>🖤 暗黑压抑</span></button>
+                    <button class="create-pill-button"><span>🔥 热血激昂</span></button>
+                    <button class="create-pill-button"><span>🎲 荒诞戏谑</span></button>
+                    <button class="create-pill-button"><span>😱 恐怖惊悚</span></button>
+                    <button class="create-pill-button"><span>🌈 超级活力</span></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-droplet"></i><span>色彩基调</span></label>
+                  <div class="create-pill-group" data-s1>
+                    <button class="create-pill-button create-color-pill is-selected"><span class="create-color-dot" style="background:linear-gradient(135deg,#f59e0b,#6366f1)"></span><span>AI 自动</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:#f59e0b"></span><span>暖色调</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:#3b82f6"></span><span>冷色调</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:linear-gradient(90deg,#06b6d4,#f97316)"></span><span>青橙影调</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:#94a3b8"></span><span>低饱和</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:linear-gradient(90deg,#000,#fff)"></span><span>高对比</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:linear-gradient(90deg,#ec4899,#8b5cf6,#06b6d4)"></span><span>霓虹彩色</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:#475569"></span><span>黑白</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:#22c55e"></span><span>绿色自然</span></button>
+                    <button class="create-pill-button create-color-pill"><span class="create-color-dot" style="background:#991b1b"></span><span>暗红色调</span></button>
+                  </div>
+                </div>
+                <div class="create-field">
+                  <label class="create-field-label"><i class="fa-solid fa-terminal"></i><span>附加指令</span></label>
+                  <textarea rows="4" maxlength="500" class="create-textarea is-compact" placeholder="例如：全片保持一镜到底、角色始终穿红色风衣、慢动作特写..."></textarea>
+                </div>
+              </div>
+            </section>
+
+            <!-- 使用提示 -->
+            <section class="create-config-block is-slate create-tips-block create-tips-panel" id="tipsBox">
+              <button class="create-section-toggle" id="tipsToggle">
+                <span class="create-section-toggle-title">使用提示 <span class="create-inline-info-icon"><i class="fa-solid fa-circle-info"></i></span></span>
+                <i class="fa-solid fa-chevron-down create-section-toggle-arrow" id="tipsArrow"></i>
+              </button>
+              <ul class="create-tips-bullet-list" id="tipsList" hidden>
+                <li class="create-tips-bullet-item"><i class="fa-solid fa-caret-right"></i><span><strong>系统会自动生成 2 套差异化方案</strong>（如快节奏 vs 文艺慢节奏），供你对比选择</span></li>
+                <li class="create-tips-bullet-item"><i class="fa-solid fa-caret-right"></i><span><strong>智能时长推演：</strong> 基于设定的视频总时长，AI 会自动分配最佳的镜头接续数目和分镜头时长</span></li>
+                <li class="create-tips-bullet-item"><i class="fa-solid fa-caret-right"></i><span><strong>智能冲突处理：</strong> 若主风格与局部参数（如色调 / 光影）冲突，AI 会自动帮你融合或做主次取舍保画质</span></li>
+                <li class="create-tips-bullet-item"><i class="fa-solid fa-caret-right"></i><span><strong>平台合规规避：</strong> 自动预判并替换可能触发平台拦截的敏感违禁词及受限 IP 版权规则，智能转化为安全表述</span></li>
+                <li class="create-tips-bullet-item"><i class="fa-solid fa-caret-right"></i><span><strong>一键粘贴结构：</strong> 方案将整合为全局精密的 Markdown 提示词文本，带有时戳和剧情排期</span></li>
+                <li class="create-tips-bullet-item"><i class="fa-solid fa-caret-right"></i><span>提示词框架已深度适配主流 AI 视频工具平台（如：即梦、可灵、Sora、Runway）</span></li>
+              </ul>
+            </section>
+          </div>
+        </article>
+
+        <div class="create-submit-wrap">
+          <button class="create-submit-btn" id="genBtn" disabled><i class="fa-solid fa-wand-magic-sparkles"></i><span>一键生成分镜提示词</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 项目详情 ========== -->
+    <div class="studio-create" id="viewProject" hidden>
+      <div class="studio-workspace">
+        <div class="workspace-main-layout">
+          <aside class="workspace-sidebar custom-scrollbar">
+            <div class="sidebar-section">
+              <h3>原始创意</h3>
+              <p class="sidebar-creative-brief" id="pvIdea">未来城市</p>
+            </div>
+            <div class="sidebar-section">
+              <h3>基本配置</h3>
+              <ul class="sidebar-config-list">
+                <li><span>分镜模型</span><strong id="pvModel">deepseek-v4-flash</strong></li>
+                <li><span>视频模型</span><strong>Seedance 2.0 Fast</strong></li>
+                <li><span>风格</span><strong id="pvStyle">电影写实</strong></li>
+                <li><span>比例</span><strong id="pvRatio">16:9</strong></li>
+                <li><span>视频总时长</span><strong id="pvDur">15s</strong></li>
+              </ul>
+            </div>
+            <div class="sidebar-section">
+              <h3>高级配置</h3>
+              <ul class="sidebar-config-list">
+                <li><span>画质要求</span><strong id="pvQuality">电影级</strong></li>
+                <li><span>光影设定</span><strong>AI 自动</strong></li>
+                <li><span>运镜偏好</span><strong>AI 自动</strong></li>
+                <li><span>转场方式</span><strong>AI 自动</strong></li>
+                <li><span>叙事节奏</span><strong>标准叙事</strong></li>
+              </ul>
+            </div>
+          </aside>
+
+          <main class="workspace-content">
+            <div class="workspace-waiting-card" id="stLoading" hidden>
+              <div class="workspace-waiting-icon"><span class="spinner"></span></div>
+              <p id="loadMsg">正在分析创意...</p>
+            </div>
+            <div class="workspace-plan-tabs" id="planTabs">
+              <button class="workspace-plan-tab is-active" id="planTabA">
+                <div class="workspace-plan-content"><strong id="planTitleA">方案A：上帝俯览</strong>
+                  <div class="plan-selected-indicator"><i class="fa-solid fa-circle-check"></i><span>当前选中</span></div>
+                </div>
+              </button>
+              <button class="workspace-plan-tab" id="planTabB">
+                <div class="workspace-plan-content"><strong id="planTitleB">方案B：沉浸穿梭</strong>
+                  <div class="plan-selected-indicator" style="display:none"><i class="fa-solid fa-circle-check"></i><span>当前选中</span></div>
+                </div>
+              </button>
+            </div>
+            <div id="stPlan" hidden>
+              <div class="workspace-plan-preview">
+                <div class="plan-preview-header">
+                  <div class="plan-preview-title"><i class="fa-solid fa-scroll"></i><h2>分镜方案内容预览</h2></div>
+                  <div class="plan-preview-actions">
+                    <button class="plan-preview-copy" id="copyAll"><i class="fa-regular fa-copy"></i><span>一键复制全部</span></button>
+                    <a class="plan-enter-video-btn" href="workbench.html"><i class="fa-solid fa-film"></i><span>进入出片工作台</span></a>
+                  </div>
+                </div>
+                <div class="plan-preview-content-wrapper">
+                  <pre class="plan-preview-text custom-scrollbar" id="promptBlock"></pre>
+                </div>
+              </div>
+            </div>
+            <div id="stFilm" hidden>
+              <div class="video-overview-header">
+                <div class="video-overview-info"><h2>出片概览</h2><span class="video-overview-progress"> 0 / 2 片段已完成 </span></div>
+                <div class="video-overview-actions"><a class="plan-enter-video-btn" href="workbench.html"><i class="fa-solid fa-arrow-up-right-from-square"></i><span>继续分镜成片</span></a></div>
+              </div>
+              <div class="workspace-video-empty">
+                <div class="video-empty-icon"><i class="fa-solid fa-photo-film"></i></div>
+                <h2>暂无生成结果</h2>
+                <p>当前方案还没有生成视频，请进入工作台开始制作。</p>
+                <a class="plan-enter-video-btn" href="workbench.html"><i class="fa-solid fa-play"></i><span>继续分镜成片</span></a>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+</div>
+
+<div class="toast err" id="toast" hidden><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.2 14.4-3.6-3.6 1.4-1.4 2.2 2.2 4.6-4.6 1.4 1.4-6 6z"/></svg><span id="toastMsg">方案不存在</span></div>
+
+<script>
+var shell = document.getElementById('shell');
+/* brief counter + submit enable */
+document.getElementById('briefTa').addEventListener('input', function(){
+  document.getElementById('briefCnt').textContent = this.value.length + ' / 3000';
+  document.getElementById('genBtn').disabled = this.value.trim().length < 2;
+});
+/* sidebar collapse / expand */
+document.getElementById('collapseBtn').addEventListener('click', function(){
+  shell.classList.add('is-sidebar-collapsed');
+  document.getElementById('collapsedHint').hidden = false;
+});
+document.getElementById('expandBtn').addEventListener('click', function(){
+  shell.classList.remove('is-sidebar-collapsed');
+  document.getElementById('collapsedHint').hidden = true;
+});
+/* single pick */
+document.querySelectorAll('[data-s1]').forEach(function(g){
+  g.addEventListener('click', function(e){
+    var c = e.target.closest('.create-choice-card, .create-pill-button'); if(!c) return;
+    g.querySelectorAll('.create-choice-card, .create-pill-button').forEach(function(x){
+      x.classList.remove('is-selected');
+      var ic = x.querySelector('.create-ratio-icon'); if(ic) ic.classList.remove('is-selected');
+    });
+    c.classList.add('is-selected');
+    var ic2 = c.querySelector('.create-ratio-icon'); if(ic2) ic2.classList.add('is-selected');
+  });
+});
+/* multi pick */
+document.querySelectorAll('[data-m1]').forEach(function(g){
+  g.addEventListener('click', function(e){
+    var c = e.target.closest('.create-pill-button'); if(!c) return;
+    c.classList.toggle('is-selected');
+  });
+});
+/* duration slider */
+document.getElementById('durRange').addEventListener('input', function(){
+  document.getElementById('durVal').textContent = this.value + 's';
+});
+/* voice switch */
+document.getElementById('voiceTgl').addEventListener('click', function(){
+  this.classList.toggle('is-on');
+  document.getElementById('voiceBox').hidden = !this.classList.contains('is-on');
+});
+/* tips collapse */
+document.getElementById('tipsToggle').addEventListener('click', function(){
+  var list = document.getElementById('tipsList');
+  list.hidden = !list.hidden;
+  document.getElementById('tipsArrow').classList.toggle('is-expanded', !list.hidden);
+});
+/* model dropdown */
+var mdlWrap = document.getElementById('mdlWrap'), mdlBox = document.getElementById('mdlBox'), mdlDrop = document.getElementById('mdlDrop');
+mdlBox.addEventListener('click', function(e){
+  e.stopPropagation();
+  mdlDrop.hidden = !mdlDrop.hidden;
+  mdlWrap.classList.toggle('open', !mdlDrop.hidden);
+});
+mdlDrop.addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  e.stopPropagation();
+  mdlDrop.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+  b.classList.add('on');
+  document.getElementById('mdlName').textContent = b.getAttribute('data-m') + ' (' + b.getAttribute('data-c') + ')';
+  mdlDrop.hidden = true; mdlWrap.classList.remove('open');
+});
+document.addEventListener('click', function(){ mdlDrop.hidden = true; mdlWrap.classList.remove('open'); });
+/* toast */
+var toastTimer = null;
+function showToast(msg, ok){
+  var t = document.getElementById('toast');
+  t.classList.toggle('ok', !!ok); t.classList.toggle('err', !ok);
+  document.getElementById('toastMsg').textContent = msg;
+  t.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.hidden = true; }, 2600);
+}
+/* generate flow */
+var projState = {ready:false, exists:true, seed:false, id:2382};
+document.getElementById('genBtn').addEventListener('click', function(){
+  var brief = document.getElementById('briefTa').value.trim();
+  if(brief.length < 2){ showToast('请输入简单的核心剧情（至少 2 个字）'); return; }
+  var name = brief.length > 8 ? brief.slice(0, 8) + '...' : brief;
+  /* sidebar item */
+  document.getElementById('projEmpty').hidden = true;
+  document.getElementById('projList').innerHTML = '<button class="studio-project-item is-active" id="projItem"><div class="studio-project-icon"><i class="fa-solid fa-clapperboard"></i></div><div class="studio-project-title" title="' + name + '">' + name + '</div></button>';
+  bindProjItem();
+  /* summary values */
+  projState.seed = false;
+  projState.id = Math.floor(Math.random() * 9000000) + 1000;
+  document.getElementById('planTitleA').textContent = '方案 1';
+  document.getElementById('planTitleB').textContent = '方案 2';
+  fillSummary(name);
+  openProject(false);
+  /* loading sequence */
+  var msgs = ['正在分析创意...', '正在规划分镜结构...', '正在生成提示词...', '正在校验一致性...'];
+  var i = 0;
+  document.getElementById('stLoading').hidden = false;
+  document.getElementById('stPlan').hidden = true;
+  document.getElementById('loadMsg').textContent = msgs[0];
+  var t = setInterval(function(){
+    i++;
+    if(i < msgs.length){ document.getElementById('loadMsg').textContent = msgs[i]; }
+    else{
+      clearInterval(t);
+      projState.ready = true;
+      document.getElementById('stLoading').hidden = true;
+      document.getElementById('stPlan').hidden = false;
+      renderPlan(0);
+      showToast('分镜提示词生成完成！', true);
+    }
+  }, 1100);
+});
+function fillSummary(name){
+  document.getElementById('pvIdea').textContent = name;
+  var m = document.getElementById('mdlName').textContent.split(' (')[0];
+  document.getElementById('pvModel').textContent = m;
+  var st = document.querySelector('.is-violet .create-card-grid .create-choice-card.is-selected strong'); if(st) document.getElementById('pvStyle').textContent = st.textContent.trim();
+  var rt = document.querySelector('.create-ratio-row .is-selected span'); if(rt) document.getElementById('pvRatio').textContent = rt.textContent.trim();
+  document.getElementById('pvDur').textContent = document.getElementById('durVal').textContent;
+  var qt = document.querySelector('.is-violet .create-pill-group .create-pill-button.is-selected span'); if(qt) document.getElementById('pvQuality').textContent = qt.textContent.trim();
+}
+function openProject(ready){
+  projState.exists = true;
+  projState.ready = !!ready;
+  document.getElementById('viewNew').hidden = true;
+  document.getElementById('viewProject').hidden = false;
+  document.getElementById('stage2').disabled = false;
+  document.querySelector('.studio-scroll').scrollTop = 0;
+  if(ready){
+    document.getElementById('stLoading').hidden = true;
+    document.getElementById('stPlan').hidden = false;
+    renderPlan(0);
+  } else {
+    setStage(1);
+  }
+}
+function bindProjItem(){
+  var it = document.getElementById('projItem') || document.getElementById('projSeed');
+  if(it && !it.__bound){
+    it.__bound = true;
+    it.addEventListener('click', function(){
+      document.querySelectorAll('.studio-project-item').forEach(function(x){ x.classList.remove('is-active'); });
+      it.classList.add('is-active');
+      document.getElementById('pvIdea').textContent = it.querySelector('.studio-project-title').textContent;
+      if(it.id === 'projSeed'){
+        projState.seed = true;
+        projState.id = 2382;
+        document.getElementById('planTitleA').textContent = '方案A：上帝俯览';
+        document.getElementById('planTitleB').textContent = '方案B：沉浸穿梭';
+      }
+      openProject(true);
+      setStage(1);
+    });
+  }
+}
+bindProjItem();
+/* plan prompts */
+var SEED_PLANS = [
+`---
+🎬 方案A：上帝俯览 视频分镜提示词
+
+整体说明
+- 时长: 15秒
+- 视觉风格: 科幻感, 未来主义建筑, 霓虹灯光, 高科技元素
+
+---
+分段提示词
+
+0-4秒画面: 远景缓慢推镜头，晨光中的未来城市天际线，薄雾缭绕，玻璃幕墙反射初升朝阳，高耸塔楼与悬浮轨道若隐若现，暖金色光线穿透薄雾形成体积光，电影级写实风格，画外音：'当黎明降临，未来已来。'
+[镜头信息扩展: 远景 / 缓慢推镜头 / 画面主体: 未来城市天际线，高耸塔楼与悬浮轨道，玻璃幕墙反射晨光]
+对白/旁白: 当黎明降临，未来已来。
+
+4-8秒画面: 俯拍高空，升降镜头从云端缓缓下降，磁悬浮车辆在立体轨道上交错穿梭，建筑轮廓沿线闪烁柔和的灯带，形成流动光河，青蓝与暖金渐变色调，电影级写实风格，画外音：'亿万道光流，编织着城市的脉搏。'
+[镜头信息扩展: 俯拍 / 升降镜头 / 画面主体: 磁悬浮车辆在立体轨道上交错穿梭，建筑轮廓沿线分布柔和灯带]
+对白/旁白: 亿万道光流，编织着城市的脉搏。
+
+8-12秒画面: 中景跟随镜头，下降到街道层，行人穿着智能服装悠闲走过，全息广告在空中投影，透明触控屏与自动售货机林立，全息光与自然光混合，电影级写实风格，画外音：'科技与人类，在这里共存。'
+[镜头信息扩展: 中景 / 跟随镜头 / 画面主体: 行人穿着智能服装悠闲走过，全息广告在空中投影，透明触控屏与自动售货机林立]
+对白/旁白: 科技与人类，在这里共存。
+
+12-15秒画面: 特写固定镜头，一个孩子停下脚步，仰头看向天空，眼中倒映着悬浮车与霓虹，脸上带着好奇与希望，城市光影在瞳孔中流转，背景虚化，霓虹与柔和自然光交织，电影级写实风格，画外音：'而希望，总在仰望之间。'
+[镜头信息扩展: 特写 / 固定镜头 / 画面主体: 一个孩子停下脚步，仰头看向天空，眼中倒映着悬浮车与霓虹]
+对白/旁白: 而希望，总在仰望之间。
+`,
+`---
+🎬 方案B：沉浸穿梭 视频分镜提示词
+
+整体说明
+- 时长: 15秒
+- 视觉风格: 科幻感, 未来主义建筑, 霓虹灯光, 高科技元素
+
+---
+分段提示词
+
+0-3秒画面: 第一人称主观视角（POV），手持镜头，画面轻微晃动，模拟坐在磁悬浮驾驶舱内的视野。挡风玻璃外，未来城市高楼密布，立体车道间悬浮车辆飞速穿梭，拖出流光。全息导航数据在玻璃上浮动闪烁，蓝绿光晕与冷色环境光交织。电影级写实风格，cinematic，高对比度，冷青色色调，引擎低鸣与全息提示音。画外音：『城市的脉搏，就在我的指尖。』
+[镜头信息扩展: 主观视角 / 手持镜头 / 画面主体: 驾驶员第一人称视角，磁悬浮驾驶舱内部，挡风玻璃外是密集的高楼与立体车道上的穿梭车辆，玻璃上浮动着全息导航数据]
+对白/旁白: 城市的脉搏，就在我的指尖。
+
+3-7秒画面: 第一人称主观视角（POV），镜头横摇，车辆急转入霓虹隧道，两侧彩灯拖曳成光带。迎面一辆悬浮车擦身而过，带起气流，画面微微震动，手持感加剧，营造惊险刺激。电影级写实风格，cinematic，高饱和蓝紫粉霓虹光影，气流呼啸声与引擎轰鸣。画外音：『穿过光带，追逐气流。』
+[镜头信息扩展: 主观视角 / 横摇 / 画面主体: 车辆急转进入霓虹隧道，两侧灯光拖曳成彩色光带，迎面悬浮车擦身而过]
+对白/旁白: 穿过光带，追逐气流。
+
+7-11秒画面: 第一人称主观视角（POV），跟随镜头，模拟下车后步行前进的视野。自动门向上滑开，踏上未来街道，人流如织，头顶全息招牌闪烁，咖啡机器人穿梭送餐。画面平稳慢速移动，营造悠闲生活气息。电影级写实风格，cinematic，暖色生活区灯光与全息光交映，街道人声与机器人提示音。画外音：『速度慢下来，生活便浮现。』
+[镜头信息扩展: 主观视角 / 跟随镜头 / 画面主体: 第一人称步行进入未来街道，人流如织，全息招牌闪烁，咖啡机器人穿梭]
+对白/旁白: 速度慢下来，生活便浮现。
+
+11-15秒画面: 全景（WS），拉镜头，镜头从街道上空向后拉远并升起，俯瞰刚刚走过的街道与城市全貌。万家灯火如星海般铺展，悬浮车流如发光血管延伸向远方。画面静谧壮阔，电影级写实风格，cinematic，深邃蓝黑色调，城市灯光如繁星，环境音渐变为高空风声，轻柔音乐浮现。画外音：『星海之下，每个光点都是故事。』
+[镜头信息扩展: 全景 / 拉镜头 / 画面主体: 从空中俯瞰刚刚走过的街道与城市全貌，万家灯火如星海，悬浮车流延伸向远方]
+对白/旁白: 星海之下，每个光点都是故事。
+`];
+function buildPrompt(name, planIdx, dur){
+  var half = Math.max(4, Math.round(dur / 2));
+  var head = '# ' + name + ' · 视频分镜提示词（方案 ' + (planIdx + 1) + '）\n\n整体说明\n- 时长: ' + dur + 's\n- 视觉风格: ' + (document.getElementById('pvStyle').textContent) + '\n- 节奏: ' + (planIdx === 0 ? '快节奏高密度冲击流' : '慢节奏情绪递进流') + '\n\n---\n分段提示词\n';
+  var s1 = '\n场景 1 (0-' + half + 's)\n画面: Cinematic wide shot, ' + (planIdx === 0 ? 'neon-drenched futuristic city street, rain reflections, masked traveler walking, fast push-in' : 'dawn light over futuristic skyline, slow dolly through mist, masked traveler silhouette') + '.\n[镜头信息扩展: ' + (planIdx === 0 ? '推镜头' : '跟随镜头') + ' / 画面主体: 旅行者]\n对白/旁白: —\n';
+  var s2 = '\n场景 2 (' + half + '-' + dur + 's)\n画面: ' + (planIdx === 0 ? 'Rapid montage, close-up on mask visor reflections, hard cuts to rooftop vista, dramatic volumetric light' : 'Long take ascending to rooftop, traveler overlooks the city, golden hour glow, gentle pull-back') + '.\n[镜头信息扩展: ' + (planIdx === 0 ? '升降镜头' : '拉镜头') + ' / 画面主体: 天台俯瞰]\n对白/旁白: “这座城市，从未入睡。”';
+  return head + s1 + s2;
+}
+var curPlanIdx = 0;
+function renderPlan(idx){
+  curPlanIdx = idx;
+  var tabs = document.querySelectorAll('#planTabs .workspace-plan-tab');
+  tabs.forEach(function(t, i){
+    t.classList.toggle('is-active', i === idx);
+    t.querySelector('.plan-selected-indicator').style.display = i === idx ? '' : 'none';
+  });
+  if(projState.seed){
+    document.getElementById('promptBlock').textContent = SEED_PLANS[idx];
+  } else {
+    var dur = parseInt(document.getElementById('durRange').value, 10);
+    document.getElementById('promptBlock').textContent = buildPrompt(document.getElementById('pvIdea').textContent, idx, dur);
+  }
+  syncHash();
+}
+document.getElementById('planTabs').addEventListener('click', function(e){
+  var b = e.target.closest('.workspace-plan-tab'); if(!b) return;
+  renderPlan(b.id === 'planTabB' ? 1 : 0);
+});
+document.getElementById('copyAll').addEventListener('click', function(){
+  var txt = document.getElementById('promptBlock').textContent;
+  if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(function(){ showToast('已复制到剪贴板', true); }); }
+  else showToast('已复制到剪贴板', true);
+});
+/* address bar params mirror online: #/storyboard-studio/<id>?stage=plan|video&plan=0|1 */
+function syncHash(){
+  if(document.getElementById('viewProject').hidden) return;
+  var stage = document.getElementById('stage2').className.indexOf('is-active') >= 0 ? 'video' : 'plan';
+  history.replaceState(null, '', '#/storyboard-studio/' + projState.id + '?stage=' + stage + '&plan=' + curPlanIdx);
+}
+/* stage switching */
+function setStage(n){
+  var s1 = document.getElementById('stage1'), s2 = document.getElementById('stage2');
+  s1.className = 'step-node is-done' + (n === 1 ? ' is-active' : '');
+  s2.className = 'step-node' + (n === 2 ? ' is-active' : '');
+  document.getElementById('stepConn').classList.toggle('is-active', n === 2);
+  if(document.getElementById('viewProject').hidden) return;
+  if(n === 2){
+    document.getElementById('stLoading').hidden = true;
+    document.getElementById('stPlan').hidden = true;
+    document.getElementById('stFilm').hidden = false;
+  } else {
+    document.getElementById('stFilm').hidden = true;
+    if(projState.ready){ document.getElementById('stPlan').hidden = false; }
+    else { document.getElementById('stLoading').hidden = false; }
+  }
+  syncHash();
+}
+document.getElementById('stage1').addEventListener('click', function(){ setStage(1); });
+document.getElementById('stage2').addEventListener('click', function(){
+  if(this.disabled) return;
+  if(document.getElementById('viewProject').hidden){ showToast('方案不存在'); return; }
+  setStage(2);
+});
+/* new task button back to form */
+document.getElementById('newTaskBtn').addEventListener('click', function(){
+  document.getElementById('viewNew').hidden = false;
+  document.getElementById('viewProject').hidden = true;
+  history.replaceState(null, '', '#/storyboard-studio/new');
+  document.getElementById('stage1').className = 'step-node is-active is-done';
+  document.getElementById('stage2').className = 'step-node';
+  document.getElementById('stage2').disabled = !projState.exists;
+  document.getElementById('stepConn').classList.remove('is-active');
+  document.querySelector('.studio-scroll').scrollTop = 0;
+});
+/* restore view from address bar params (same format as online) */
+(function initFromHash(){
+  var m = location.hash.match(/#\/storyboard-studio\/(\d+)(?:\?([^#]*))?/);
+  if(!m) return;
+  var q = new URLSearchParams(m[2] || '');
+  projState.id = parseInt(m[1], 10) || 2382;
+  var it = document.getElementById('projSeed');
+  if(it) it.click();
+  renderPlan(q.get('plan') === '1' ? 1 : 0);
+  setStage(q.get('stage') === 'video' ? 2 : 1);
+})();
+</script>
+<script>
+(function(){
+  var els = document.querySelectorAll('span,div,a,h1,h2,p');
+  for (var i = 0; i < els.length; i++){
+    var el = els[i];
+    if (el.textContent.replace(/\s+/g,'') !== 'VidSpark') continue;
+    if (el.children.length > 1) continue;
+    var cls = el.className || '';
+    var brand = /font-bold|studio-brand-name|tracking-tight|text-3xl/.test(cls) ||
+      (el.children.length === 1 && /brand-gradient|text-brand-|text-blue-|text-purple-|text-violet-/.test(el.children[0].className || ''));
+    if (!brand) continue;
+    var t = el.closest('.cursor-pointer') || el.parentElement;
+    if (!t || t.__vsBrand) continue;
+    t.__vsBrand = 1;
+    t.style.cursor = 'pointer';
+    t.addEventListener('click', function(e){ e.preventDefault(); location.href = 'index.html'; });
+  }
+})();
+</script>
+</body>
+</html>

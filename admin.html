@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据概览 - VidSpark 管理后台</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="container container-wide nav-inner">
+    <a href="index.html" class="brand">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z" fill="currentColor" stroke="none"/></svg></span>
+      <span>Vid<span class="brand-gradient">Spark</span></span>
+      <span class="pill violet" style="margin-left:6px">管理后台</span>
+    </a>
+    <div class="nav-actions">
+      <a href="index.html" class="btn btn-light btn-sm">返回前台</a>
+      <span class="pill gray">admin@vidspark.cn</span>
+    </div>
+  </div>
+</header>
+
+<div class="app-layout">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar">
+    <span class="side-title">管理菜单</span>
+    <a href="admin.html" class="side-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+      数据概览
+    </a>
+    <a href="#" class="side-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16.5 15.5c2.6.3 4.4 1.9 5 4.5"/></svg>
+      用户管理
+    </a>
+    <a href="#" class="side-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+      任务管理
+    </a>
+    <a href="#" class="side-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h14l-1.2 16.5a2 2 0 0 1-2 1.5H8.2a2 2 0 0 1-2-1.5L5 3z"/><path d="M9 7.5a3 3 0 0 1 6 0"/></svg>
+      订单管理
+    </a>
+    <a href="#" class="side-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+      内容管理
+    </a>
+    <a href="#" class="side-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M4.9 4.9l2.2 2.2M16.9 16.9l2.2 2.2M2 12h3M19 12h3M4.9 19.1l2.2-2.2M16.9 7.1l2.2-2.2"/></svg>
+      系统设置
+    </a>
+    <div class="side-cta">
+      <strong style="font-size:14px">VidSpark Admin</strong>
+      <p class="text-xs text-muted" style="margin:6px 0 0">平台运行正常，所有服务可用。</p>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="app-main">
+    <h1 style="font-size:24px;font-weight:800;margin-bottom:4px">数据概览</h1>
+    <p class="text-sm text-muted mb-6">平台核心运营指标实时汇总</p>
+
+    <div class="stats mb-6">
+      <div class="stat card">
+        <div class="num">12,846</div>
+        <div class="lbl">总用户数</div>
+        <span class="pill green mt-3">+128 今日</span>
+      </div>
+      <div class="stat card">
+        <div class="num">45,203</div>
+        <div class="lbl">累计任务数</div>
+        <span class="pill blue mt-3">36 进行中</span>
+      </div>
+      <div class="stat card">
+        <div class="num">¥86,540</div>
+        <div class="lbl">本月订单总额</div>
+        <span class="pill green mt-3">↑ 12.6%</span>
+      </div>
+      <div class="stat card">
+        <div class="num">3,921</div>
+        <div class="lbl">活跃会员数</div>
+        <span class="pill violet mt-3">付费率 30.5%</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="flex items-center justify-between" style="flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="panel-title">最近订单</div>
+          <div class="panel-sub" style="margin-bottom:0">最近 7 天内的会员订阅与充值记录</div>
+        </div>
+        <a href="#" class="btn btn-light btn-sm">查看全部</a>
+      </div>
+      <div class="table-wrap mt-4" style="border:none">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>订单号</th>
+              <th>用户</th>
+              <th>套餐</th>
+              <th>金额</th>
+              <th>状态</th>
+              <th>时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>#VS-20260831-0142</td>
+              <td>lin_xiaoyu</td>
+              <td>专业版 · 连续包月</td>
+              <td>¥49.00</td>
+              <td><span class="pill green">已支付</span></td>
+              <td>2026-08-31 09:42</td>
+            </tr>
+            <tr>
+              <td>#VS-20260831-0141</td>
+              <td>creator_wang</td>
+              <td>基础版 · 年付</td>
+              <td>¥299.00</td>
+              <td><span class="pill green">已支付</span></td>
+              <td>2026-08-31 08:15</td>
+            </tr>
+            <tr>
+              <td>#VS-20260830-0139</td>
+              <td>filmsen</td>
+              <td>算力加油包 · 500 点</td>
+              <td>¥25.00</td>
+              <td><span class="pill amber">待支付</span></td>
+              <td>2026-08-30 22:03</td>
+            </tr>
+            <tr>
+              <td>#VS-20260830-0136</td>
+              <td>ai_momo</td>
+              <td>专业版 · 月付</td>
+              <td>¥59.00</td>
+              <td><span class="pill green">已支付</span></td>
+              <td>2026-08-30 18:47</td>
+            </tr>
+            <tr>
+              <td>#VS-20260829-0131</td>
+              <td>video_zhang</td>
+              <td>专业版 · 月付</td>
+              <td>¥59.00</td>
+              <td><span class="pill red">已退款</span></td>
+              <td>2026-08-29 14:26</td>
+            </tr>
+            <tr>
+              <td>#VS-20260828-0127</td>
+              <td>studio_kite</td>
+              <td>团队版 · 季付</td>
+              <td>¥399.00</td>
+              <td><span class="pill green">已支付</span></td>
+              <td>2026-08-28 11:08</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="assets/js/main.js"></script>
+<script>
+(function(){
+  var els = document.querySelectorAll('span,div,a,h1,h2,p');
+  for (var i = 0; i < els.length; i++){
+    var el = els[i];
+    if (el.textContent.replace(/\s+/g,'') !== 'VidSpark') continue;
+    if (el.children.length > 1) continue;
+    var cls = el.className || '';
+    var brand = /font-bold|studio-brand-name|tracking-tight|text-3xl/.test(cls) ||
+      (el.children.length === 1 && /brand-gradient|text-brand-|text-blue-|text-purple-|text-violet-/.test(el.children[0].className || ''));
+    if (!brand) continue;
+    var t = el.closest('.cursor-pointer') || el.parentElement;
+    if (!t || t.__vsBrand) continue;
+    t.__vsBrand = 1;
+    t.style.cursor = 'pointer';
+    t.addEventListener('click', function(e){ e.preventDefault(); location.href = 'index.html'; });
+  }
+})();
+</script>
+</body>
+</html>
