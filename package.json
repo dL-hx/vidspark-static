@@ -1,0 +1,25 @@
+{
+  "name": "vidspark-static",
+  "version": "1.0.0",
+  "description": "VidSpark 是一站式 AI 音视频理解与多平台内容创作平台。从视频理解到内容创作，一站式完成多平台内容生产：粘贴视频链接或上传文件，一键生成结构化总结、思维导图与精准转录；基于总结素材一键生成适配小红书、抖音、B站、微信公众号、YouTube 等平台的专业内容；输入简单剧情即可生成电影级分镜方案并推进高质量分镜视频创作。",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "preview": "netlify deploy",
+    "publish": "netlify deploy --prod"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dL-hx/vidspark-static.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dL-hx/vidspark-static/issues"
+  },
+  "homepage": "https://github.com/dL-hx/vidspark-static#readme"
+}
